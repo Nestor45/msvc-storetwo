@@ -40,7 +40,7 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteDTODb);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/editar-cliente/{id}")
     public ResponseEntity<?> editarCliente(@Valid @RequestBody ClienteDTO clienteDTO, BindingResult result, @PathVariable Long id) {
         if (result.hasErrors()) {
             return validarObjeto(result);
@@ -55,14 +55,15 @@ public class ClienteController {
             clienteDb.setNombre(clienteDTO.getNombre());
             clienteDb.setRazonSocial(clienteDTO.getRazonSocial());
 
-            clienteService.crearClient(clienteDTO);
+            clienteRepository.save(clienteDb);
+//            clienteService.crearClient(clienteDTO);
 
             return ResponseEntity.ok().body(clienteDTO);
         }
         return ResponseEntity.badRequest().body(result.getFieldErrors());
     }
 
-    @PutMapping("/eliminar/{id}")
+    @PutMapping("/eliminar-cliente/{id}")
     public ResponseEntity<?> eliminarCliente(@PathVariable Long id) {
         Optional<Cliente> optionalCliente = clienteRepository.findById(id);
         Map<String, Object> response = new HashMap<>();
@@ -77,8 +78,6 @@ public class ClienteController {
         response.put("message: ","Error al eliminar el Cliente");
         return ResponseEntity.badRequest().body(response);
     }
-
-
 
     private static ResponseEntity<Map<String, String>> validarObjeto(BindingResult result) {
         Map<String, String> errors = new HashMap<>();

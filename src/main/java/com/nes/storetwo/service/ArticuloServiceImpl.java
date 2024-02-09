@@ -1,12 +1,15 @@
 package com.nes.storetwo.service;
 
 import com.nes.storetwo.dto.ArticuloDTO;
+import com.nes.storetwo.dto.ClienteDTO;
 import com.nes.storetwo.models.entity.Articulo;
+import com.nes.storetwo.models.entity.Cliente;
 import com.nes.storetwo.repository.ArticuloRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,20 +20,37 @@ public class ArticuloServiceImpl implements ArticuloService{
 
     @Override
     @Transactional(readOnly = true)
-    public List<Articulo> listarArticulos() {
-        return (List<Articulo>) articuloRepository.findAll();
+    public List<ArticuloDTO> listarArticulos() {
+        List<Articulo> articulos = (List<Articulo>) articuloRepository.findAll();
+        List<ArticuloDTO> articulosDTO = new ArrayList<>();
+        articulos.forEach(articulo -> {
+            ArticuloDTO articuloDTO = convertirArticuloADTO(articulo);
+            articulosDTO.add(articuloDTO);
+        });
+        return articulosDTO;
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<Articulo> obtenerArticuloId(Long id) {
-        return articuloRepository.findById(id);
+    public Optional<ArticuloDTO> obtenerArticuloId(Long id) {
+        Optional<Articulo> articulo = articuloRepository.findById(id);
+        ArticuloDTO articuloDTO=  convertirArticuloADTO(articulo.get());
+        return Optional.of(articuloDTO);
     }
 
     @Override
     @Transactional
-    public Articulo crearArticulo(Articulo articulo) {
-        return articuloRepository.save(articulo);
+    public ArticuloDTO crearArticulo(ArticuloDTO articuloDTO) {
+        Articulo articulo = new Articulo();
+
+        articulo.setNombre(articuloDTO.getNombre());
+        articulo.setCodigo(articuloDTO.getCodigo());
+        articulo.setPrecio(articuloDTO.getPrecio());
+        articulo.setStock(articuloDTO.getStock());
+
+        articuloRepository.save(articulo);
+
+        return articuloDTO;
     }
 
     @Override
@@ -42,7 +62,24 @@ public class ArticuloServiceImpl implements ArticuloService{
     @Override
     @Transactional(readOnly = true)
     public Optional<ArticuloDTO> buscarCodigoArticulo(String codigo) {
-        return articuloRepository.findArticuloByCodigo(codigo);
+        ArticuloDTO articuloDTO = convertirArticuloADTO(articuloRepository.findArticuloByCodigo(codigo));
+        return Optional.of(articuloDTO);
+    }
+
+    @Override
+    public void eliminarArticulo(Long id) {
+        articuloRepository.deleteById(id);
+    }
+
+    private ArticuloDTO convertirArticuloADTO(Articulo articulo) {
+        ArticuloDTO articuloDTO = new ArticuloDTO();
+
+        articuloDTO.setNombre(articulo.getNombre());
+        articuloDTO.setCodigo(articulo.getCodigo());
+        articuloDTO.setPrecio(articulo.getPrecio());
+        articuloDTO.setStock(articulo.getStock());
+
+        return articuloDTO;
     }
 
 }
