@@ -71,11 +71,11 @@ public class ClienteController {
             Cliente cliente = optionalCliente.get();
             System.out.println("Eliminando...");
             clienteService.eliminarCliente(cliente.getId());
-            response.put("message: ","Se a eliminado el Cliente");
-            response.put("data: ", optionalCliente.get().getNombre());
+            response.put("message","Se a eliminado el Cliente");
+            response.put("data", optionalCliente.get().getNombre());
             return ResponseEntity.ok().body(response);
         }
-        response.put("message: ","Error al eliminar el Cliente");
+        response.put("message","Error al eliminar el Cliente");
         return ResponseEntity.badRequest().body(response);
     }
 

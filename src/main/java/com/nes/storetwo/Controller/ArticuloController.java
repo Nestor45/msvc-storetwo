@@ -68,8 +68,8 @@ public class ArticuloController {
         Map<String, Object> response = new HashMap<>();
         Optional<ArticuloDTO> articuloDTOOptionall= articuloService.buscarCodigoArticulo(codigo);
         if (articuloDTOOptionall.isPresent()) {
-            response.put("message: ", "El articulo con el codigo: "+ codigo + "fue encontrado");
-            response.put("data: ", articuloDTOOptionall.get());
+            response.put("message", "El articulo con el codigo: "+ codigo + "fue encontrado");
+            response.put("data", articuloDTOOptionall.get());
             return ResponseEntity.ok().body(response);
         }
         return ResponseEntity.badRequest().body(response);
